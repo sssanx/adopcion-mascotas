@@ -1,0 +1,697 @@
+---
+// src/pages/admin.astro
+import Layout from "../../layouts/Layout.astro";
+---
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+
+  <Layout title="Administrar Mascotas">
+    <div class="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+      <!-- Navegación entre secciones -->
+      <div class="border-b border-gray-200 mb-8">
+        <nav class="-mb-px flex space-x-8" role="tablist" aria-label="Pestañas admin">
+          <button id="tab-agregar" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 border-amber-500 font-medium text-sm text-amber-600" type="button">Agregar Mascota</button>
+          <button id="tab-listar" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" type="button">Ver Mascotas</button>
+          <button id="tab-adopciones" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" type="button">Solicitudes de Adopción</button>
+          <button id="tab-contacto" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" type="button">Mensajes de Contacto</button>
+        </nav>
+      </div>
+
+      <!-- Sección Agregar Mascota -->
+      <section id="seccion-agregar" class="seccion-activa">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">Agregar Nueva Mascota</h2>
+            <p class="mt-1 text-sm text-gray-500">Complete la información de la mascota para agregarla al sistema.</p>
+          </div>
+
+          <div class="p-6">
+            <form id="formMascota" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Columna 1 -->
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                  <input type="text" name="nombre" placeholder="Nombre de la mascota" required class="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Especie</label>
+                  <select name="especie" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">Seleccionar especie</option>
+                    <option value="perro">Perro</option>
+                    <option value="gato">Gato</option>
+                    <option value="conejo">Conejo</option>
+                    <option value="ave">Ave</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Raza</label>
+                  <input type="text" name="raza" placeholder="Raza de la mascota" class="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Edad</label>
+                  <div class="flex space-x-3">
+                    <input type="number" name="edad" placeholder="Edad" min="0" max="30" class="flex-1 px-3 py-2 border border-gray-300 rounded-md" />
+                    <select name="edad_unidad" class="w-32 px-3 py-2 border border-gray-300 rounded-md">
+                      <option value="años">Años</option>
+                      <option value="meses">Meses</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+                  <div class="flex space-x-6">
+                    <label class="inline-flex items-center">
+                      <input type="radio" name="sexo" value="macho" class="text-amber-500" />
+                      <span class="ml-2 text-gray-700">Macho</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                      <input type="radio" name="sexo" value="hembra" class="text-amber-500" />
+                      <span class="ml-2 text-gray-700">Hembra</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Columna 2 -->
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Tamaño</label>
+                  <select name="tamano" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">Seleccionar tamaño</option>
+                    <option value="pequeño">Pequeño (1-10 kg)</option>
+                    <option value="mediano">Mediano (11-25 kg)</option>
+                    <option value="grande">Grande (26+ kg)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">URL de la imagen</label>
+                  <input type="text" name="imagen_url" placeholder="https://ejemplo.com/imagen.jpg" class="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                  <div class="image-preview mt-3 hidden">
+                    <p class="text-sm text-gray-500 mb-2">Vista previa:</p>
+                    <img id="previewImage" class="w-32 h-32 object-cover rounded-lg border border-gray-300" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <textarea name="descripcion" placeholder="Describe la mascota..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Características</label>
+                  <div class="grid grid-cols-2 gap-3">
+                    <label class="inline-flex items-center">
+                      <input type="checkbox" name="caracteristicas" value="vacunado" class="rounded" />
+                      <span class="ml-2 text-sm text-gray-700">Vacunado</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                      <input type="checkbox" name="caracteristicas" value="esterilizado" class="rounded" />
+                      <span class="ml-2 text-sm text-gray-700">Esterilizado</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                      <input type="checkbox" name="caracteristicas" value="desparasitado" class="rounded" />
+                      <span class="ml-2 text-sm text-gray-700">Desparasitado</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                      <input type="checkbox" name="caracteristicas" value="microchip" class="rounded" />
+                      <span class="ml-2 text-sm text-gray-700">Microchip</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="flex items-center">
+                  <input type="checkbox" name="disponible" id="disponible" checked class="h-4 w-4" />
+                  <label for="disponible" class="ml-2 block text-sm text-gray-700">Disponible para adopción</label>
+                </div>
+              </div>
+
+              <div class="md:col-span-2 pt-6 border-t border-gray-200">
+                <button type="submit" class="w-full py-3 px-4 rounded-md text-sm font-medium text-white bg-amber-500 hover:bg-amber-600">Agregar mascota</button>
+              </div>
+            </form>
+
+            <div id="msg" class="mt-4 p-4 rounded-md hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Listar Mascotas -->
+      <section id="seccion-listar" class="seccion-oculta">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-900">Lista de Mascotas</h2>
+                <p class="mt-1 text-sm text-gray-500">Gestione todas las mascotas del sistema.</p>
+              </div>
+              <div class="mt-4 sm:mt-0 flex space-x-3">
+                <select id="filtro-estado" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md">
+                  <option value="todas">Todas las mascotas</option>
+                  <option value="disponibles">Solo disponibles</option>
+                  <option value="adoptadas">Adoptadas</option>
+                </select>
+                <button id="btn-refrescar" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm bg-white">Actualizar</button>
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div id="lista-mascotas" class="space-y-4">
+              <div class="text-center py-12 text-gray-500">
+                Cargando mascotas...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Adopciones -->
+      <section id="seccion-adopciones" class="seccion-oculta">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-900">Solicitudes de Adopción</h2>
+                <p class="mt-1 text-sm text-gray-500">Revise y gestione las solicitudes de adopción pendientes.</p>
+              </div>
+              <button id="btn-refrescar-adopciones" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 rounded-md text-sm text-white bg-amber-500">Actualizar</button>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div id="lista-adopciones" class="space-y-6">
+              <div class="text-center py-12 text-gray-500">
+                Seleccione "Solicitudes de Adopción" para cargar las solicitudes
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Contacto  -->
+      <section id="seccion-contacto" class="seccion-oculta">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-900">Mensajes de Contacto</h2>
+                <p class="mt-1 text-sm text-gray-500">Mensajes enviados desde el formulario de contacto.</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <input id="search-contacto" type="search" placeholder="Buscar por nombre, correo o asunto..." class="px-3 py-2 border border-gray-300 rounded-md" />
+                <button id="btn-refrescar-contacto" class="px-4 py-2 rounded-md bg-amber-500 text-white">Actualizar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div id="lista-contacto" class="overflow-x-auto">
+              <div class="text-center py-8 text-gray-500">Seleccione "Mensajes de Contacto" para cargar...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal de Confirmación para Eliminar -->
+    <div id="modal-eliminar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+      <div class="bg-white rounded-lg max-w-md w-full p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirmar Eliminación</h3>
+        <p class="text-gray-600 mb-6" id="modal-texto">¿Está seguro de que desea eliminar esta mascota? Esta acción no se puede deshacer y también eliminará cualquier solicitud de adopción asociada.</p>
+        <div class="flex justify-end space-x-3">
+          <button id="modal-cancelar" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
+          <button id="modal-confirmar" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPT CORREGIDO -->
+    <script type="module">
+      document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab-button');
+        const secciones = document.querySelectorAll('section[id^="seccion-"]');
+        const listaMascotas = document.getElementById('lista-mascotas');
+        const listaAdopciones = document.getElementById('lista-adopciones');
+        const listaContacto = document.getElementById('lista-contacto');
+        const filtroEstado = document.getElementById('filtro-estado');
+        const btnRefrescar = document.getElementById('btn-refrescar');
+        const btnRefrescarAdopciones = document.getElementById('btn-refrescar-adopciones');
+        const btnRefrescarContacto = document.getElementById('btn-refrescar-contacto');
+        const form = document.getElementById('formMascota');
+        const msg = document.getElementById('msg');
+        const imagenUrlInput = document.querySelector('input[name="imagen_url"]');
+        const previewContainer = document.querySelector('.image-preview');
+        const previewImage = document.getElementById('previewImage');
+        const searchContacto = document.getElementById('search-contacto');
+        
+        // Elementos del modal de eliminación
+        const modalEliminar = document.getElementById('modal-eliminar');
+        const modalTexto = document.getElementById('modal-texto');
+        const modalCancelar = document.getElementById('modal-cancelar');
+        const modalConfirmar = document.getElementById('modal-confirmar');
+
+        let mascotaAEliminar = null;
+
+        // Configurar modal de eliminación
+        modalCancelar.addEventListener('click', () => {
+          modalEliminar.classList.add('hidden');
+          mascotaAEliminar = null;
+        });
+
+        modalConfirmar.addEventListener('click', async () => {
+          if (mascotaAEliminar) {
+            await eliminarMascota(mascotaAEliminar.id, mascotaAEliminar.nombre);
+            modalEliminar.classList.add('hidden');
+            mascotaAEliminar = null;
+          }
+        });
+
+        // Helper: quitar clases active de tabs
+        function activateTab(tab) {
+          tabs.forEach(t => {
+            t.classList.remove('active', 'border-amber-500', 'text-amber-600');
+            t.classList.add('border-transparent', 'text-gray-500');
+          });
+          tab.classList.add('active', 'border-amber-500', 'text-amber-600');
+          tab.classList.remove('border-transparent', 'text-gray-500');
+        }
+
+        // Manejo pestañas
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            const target = tab.id.replace('tab-', 'seccion-');
+
+            activateTab(tab);
+
+            secciones.forEach(sec => {
+              sec.classList.add('seccion-oculta');
+              sec.classList.remove('seccion-activa');
+            });
+
+            const targetSection = document.getElementById(target);
+            if (targetSection) {
+              targetSection.classList.remove('seccion-oculta');
+              targetSection.classList.add('seccion-activa');
+            }
+
+            // Cargar datos por sección
+            if (target === 'seccion-listar') cargarMascotas();
+            if (target === 'seccion-adopciones') cargarSolicitudes();
+            if (target === 'seccion-contacto') cargarContacto();
+          });
+        });
+
+        // Preview imagen
+        if (imagenUrlInput && previewImage) {
+          imagenUrlInput.addEventListener('input', () => {
+            const url = imagenUrlInput.value.trim();
+            if (url) {
+              previewImage.src = url;
+              previewImage.onerror = () => previewContainer.classList.add('hidden');
+              previewImage.onload = () => previewContainer.classList.remove('hidden');
+            } else {
+              previewContainer.classList.add('hidden');
+            }
+          });
+        }
+
+        // CARGAR MASCOTAS
+        async function cargarMascotas() {
+          if(!listaMascotas) return;
+          listaMascotas.innerHTML = `<div class="text-center py-8 text-gray-500">Cargando mascotas...</div>`;
+          let url = '/api/mascotas';
+          const filtro = filtroEstado?.value || 'todas';
+          if (filtro === 'disponibles') url = '/api/mascotas?disponible=true';
+          else if (filtro === 'adoptadas') url = '/api/mascotas?disponible=false';
+
+          try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.success && data.mascotas?.length > 0) {
+              listaMascotas.innerHTML = data.mascotas.map(m => `
+                <div class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm">
+                  <div class="flex items-center space-x-4">
+                    <img src="${m.imagen_url || '/images/placeholder-mascota.jpg'}" alt="${m.nombre}" class="w-16 h-16 object-cover rounded-lg border border-gray-200">
+                    <div>
+                      <h3 class="font-semibold text-gray-900">${m.nombre}</h3>
+                      <p class="text-sm text-gray-600">${m.raza || 'Sin raza'} • ${m.edad || '?'} ${m.edad_unidad || 'años'} • ${m.especie}</p>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${m.disponible ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">${m.disponible ? 'Disponible' : 'Adoptado'}</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <button onclick="editarMascota(${m.id})" class="px-3 py-1.5 rounded-md text-sm bg-white border border-gray-300 hover:bg-gray-50">Editar</button>
+                    <select onchange="cambiarDisponibilidad(${m.id}, this.value)" class="pl-3 pr-10 py-1.5 border border-gray-300 rounded-md text-sm bg-white">
+                      <option value="true" ${m.disponible ? 'selected' : ''}>Disponible</option>
+                      <option value="false" ${!m.disponible ? 'selected' : ''}>Adoptado</option>
+                    </select>
+                    <button onclick="mostrarModalEliminar(${m.id}, '${escapeHtml(m.nombre)}')" class="px-3 py-1.5 rounded-md text-sm bg-red-600 text-white hover:bg-red-700">Eliminar</button>
+                  </div>
+                </div>
+              `).join('');
+            } else {
+              listaMascotas.innerHTML = `<div class="text-center py-12 text-gray-500">No se encontraron mascotas.</div>`;
+            }
+          } catch(err) {
+            console.error('Error cargando mascotas:', err);
+            listaMascotas.innerHTML = `<div class="text-center py-12 text-red-500">Error al cargar las mascotas.</div>`;
+          }
+        }
+
+        // CARGAR SOLICITUDES (pendientes)
+        async function cargarSolicitudes() {
+          if(!listaAdopciones) return;
+          listaAdopciones.innerHTML = `<div class="text-center py-8 text-gray-500">Cargando solicitudes...</div>`;
+          try {
+            const res = await fetch('/api/adopciones?estado=pendiente');
+            const data = await res.json();
+            if (data.success && data.solicitudes?.length > 0) {
+              listaAdopciones.innerHTML = data.solicitudes.map(s => `
+                <div class="bg-white border rounded-lg p-6 hover:shadow-sm">
+                  <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                    <div class="flex-1">
+                      <h3 class="text-lg font-semibold text-gray-900">${s.nombre_solicitante}</h3>
+                      <p class="text-gray-600">Email: ${s.email_solicitante}</p>
+                      ${s.telefono_solicitante ? `<p class="text-gray-600">Teléfono: ${s.telefono_solicitante}</p>` : ''}
+                      <p class="text-sm text-gray-500 mt-2"><b>Mascota:</b> ${s.mascota_nombre} (ID: ${s.mascota_id})</p>
+                      ${s.mensaje ? `<div class="mt-3"><p class="text-sm text-gray-600 bg-gray-50 p-3 rounded">${s.mensaje}</p></div>` : ''}
+                      <div class="text-xs text-gray-400 mt-2">Enviado: ${new Date(s.fecha_creacion).toLocaleString()}</div>
+                    </div>
+                    <div class="flex flex-col space-y-2 lg:ml-6 mt-4 lg:mt-0">
+                      <button onclick="aprobarSolicitud(${s.id}, ${s.mascota_id})" class="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700">Aprobar</button>
+                      <button onclick="rechazarSolicitud(${s.id})" class="px-4 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50">Rechazar</button>
+                    </div>
+                  </div>
+                </div>
+              `).join('');
+            } else {
+              listaAdopciones.innerHTML = `<div class="text-center py-12 text-gray-500">No hay solicitudes pendientes.</div>`;
+            }
+          } catch(err) {
+            console.error('Error cargando solicitudes:', err);
+            listaAdopciones.innerHTML = `<div class="text-center py-12 text-red-500">Error al cargar las solicitudes.</div>`;
+          }
+        }
+
+        // CARGAR MENSAJES DE CONTACTO (con búsqueda client-side)
+        let contactoCache = []; // cache para searching
+        async function cargarContacto() {
+          if(!listaContacto) return;
+          listaContacto.innerHTML = `<div class="text-center py-8 text-gray-500">Cargando mensajes...</div>`;
+          try {
+            const res = await fetch('/api/contacto/');
+            const data = await res.json();
+            if (data.success && data.data?.length > 0) {
+              contactoCache = data.data; // guardar cache
+              renderContactos(contactoCache);
+            } else {
+              contactoCache = [];
+              listaContacto.innerHTML = `<div class="text-center py-12 text-gray-500">No hay mensajes.</div>`;
+            }
+          } catch(err) {
+            console.error('Error cargando contacto:', err);
+            listaContacto.innerHTML = `<div class="text-center py-12 text-red-500">Error al cargar mensajes.</div>`;
+          }
+        }
+
+        // Renderizar contactos filtrados
+        function renderContactos(items) {
+          if (!listaContacto) return;
+          if (!items || items.length === 0) {
+            listaContacto.innerHTML = `<div class="text-center py-12 text-gray-500">No hay mensajes que coincidan.</div>`;
+            return;
+          }
+          listaContacto.innerHTML = `
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-amber-100">
+                  <th class="border px-3 py-2 text-left">Nombre</th>
+                  <th class="border px-3 py-2 text-left">Correo</th>
+                  <th class="border px-3 py-2 text-left">Teléfono</th>
+                  <th class="border px-3 py-2 text-left">Asunto</th>
+                  <th class="border px-3 py-2 text-left">Mensaje</th>
+                  <th class="border px-3 py-2 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(msg => `
+                  <tr>
+                    <td class="border px-3 py-2 align-top">${escapeHtml(msg.nombre)}</td>
+                    <td class="border px-3 py-2 align-top">${escapeHtml(msg.email)}</td>
+                    <td class="border px-3 py-2 align-top">${escapeHtml(msg.telefono || '-')}</td>
+                    <td class="border px-3 py-2 align-top">${escapeHtml(msg.asunto || '-')}</td>
+                    <td class="border px-3 py-2 align-top">${escapeHtml(msg.mensaje)}</td>
+                    <td class="border px-3 py-2 text-center align-top">
+                      <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onclick="eliminarMensaje(${msg.id})">Eliminar</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+
+        // Buscar en cache
+        function filtrarContactos(term) {
+          const q = term.trim().toLowerCase();
+          if (!q) {
+            renderContactos(contactoCache);
+            return;
+          }
+          const filtrados = contactoCache.filter(it => {
+            return (it.nombre && it.nombre.toLowerCase().includes(q)) ||
+                   (it.email && it.email.toLowerCase().includes(q)) ||
+                   (it.asunto && it.asunto.toLowerCase().includes(q)) ||
+                   (it.mensaje && it.mensaje.toLowerCase().includes(q));
+          });
+          renderContactos(filtrados);
+        }
+
+        // Escape simple para evitar inyección en innerHTML (cuando mostramos datos)
+        function escapeHtml(str) {
+          if (!str) return '';
+          return String(str)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+        }
+
+        // FUNCIONES GLOBALES LLAMADAS POR BOTONES EN HTML
+        window.editarMascota = (id) => {
+          window.location.href = `/admins/editar-mascota?id=${id}`;
+        };
+
+        window.cambiarDisponibilidad = async (id, val) => {
+          try {
+            const res = await fetch('/api/mascotas', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id, disponible: val === 'true' })
+            });
+            const data = await res.json();
+            if (res.ok) {
+              mostrarMensaje('Estado actualizado correctamente', 'success');
+              cargarMascotas();
+            } else {
+              mostrarMensaje('Error: ' + (data.error || 'no se pudo actualizar'), 'error');
+            }
+          } catch(err) {
+            mostrarMensaje('Error de conexión: ' + err.message, 'error');
+          }
+        };
+
+        // Mostrar modal de eliminación - FUNCIÓN CORREGIDA
+        window.mostrarModalEliminar = (id, nombre) => {
+          console.log('Mostrando modal para eliminar mascota ID:', id, 'Nombre:', nombre);
+          mascotaAEliminar = { id, nombre };
+          modalTexto.textContent = `¿Está seguro de que desea eliminar a "${nombre}"? Esta acción no se puede deshacer y también eliminará cualquier solicitud de adopción asociada.`;
+          modalEliminar.classList.remove('hidden');
+        };
+
+        // Eliminar mascota - FUNCIÓN CORREGIDA
+        async function eliminarMascota(id, nombre) {
+          try {
+            console.log('🔍 Iniciando eliminación de mascota:');
+            console.log('ID:', id);
+            console.log('Nombre:', nombre);
+            
+            // CORRECCIÓN: Usar el ID correctamente en la URL
+            const res = await fetch(`/api/mascotas?id=${id}`, {
+              method: 'DELETE'
+            });
+            
+            console.log('📡 Status de respuesta:', res.status);
+            console.log('📡 OK:', res.ok);
+            
+            const data = await res.json();
+            console.log('📦 Datos de respuesta:', data);
+            
+            if (res.ok && data.success) {
+              console.log('✅ Mascota eliminada exitosamente');
+              mostrarMensaje(data.message || `Mascota "${nombre}" eliminada correctamente`, 'success');
+              cargarMascotas();
+            } else {
+              const errorMsg = data.error || data.message || 'No se pudo eliminar la mascota';
+              console.log('❌ Error:', errorMsg);
+              mostrarMensaje('Error: ' + errorMsg, 'error');
+            }
+          } catch(err) {
+            console.error('💥 Error fatal:', err);
+            mostrarMensaje('Error de conexión: ' + err.message, 'error');
+          }
+        }
+
+        window.aprobarSolicitud = async (solicitudId, mascotaId) => {
+          if(!confirm('¿Está seguro de que desea aprobar esta solicitud? La mascota será marcada como adoptada.')) return;
+          try {
+            const res = await fetch('/api/adopciones', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ solicitud_id: solicitudId, mascota_id: mascotaId, accion: 'aprobar' })
+            });
+            const data = await res.json();
+            if (data.success) {
+              mostrarMensaje('Solicitud aprobada. Mascota marcada como adoptada.', 'success');
+              cargarSolicitudes(); cargarMascotas();
+            } else {
+              mostrarMensaje('Error: ' + (data.error || 'no se pudo aprobar'), 'error');
+            }
+          } catch(err) {
+            mostrarMensaje('Error de conexión', 'error');
+          }
+        };
+
+        window.rechazarSolicitud = async (solicitudId) => {
+          if(!confirm('¿Está seguro de que desea rechazar esta solicitud?')) return;
+          try {
+            const res = await fetch('/api/adopciones', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ solicitud_id: solicitudId, accion: 'rechazar' })
+            });
+            const data = await res.json();
+            if (data.success) {
+              mostrarMensaje('Solicitud rechazada.', 'success');
+              cargarSolicitudes();
+            } else {
+              mostrarMensaje('Error: ' + (data.error || 'no se pudo rechazar'), 'error');
+            }
+          } catch(err) {
+            mostrarMensaje('Error de conexión', 'error');
+          }
+        };
+
+        // Eliminar mensaje de contacto
+        window.eliminarMensaje = async (id) => {
+          if (!confirm('¿Seguro que quieres eliminar este mensaje?')) return;
+          try {
+            const res = await fetch('/api/contacto/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (data.success) {
+              mostrarMensaje('Mensaje eliminado', 'success');
+              cargarContacto();
+            } else {
+              mostrarMensaje('Error: ' + (data.error || 'no se pudo eliminar'), 'error');
+            }
+          } catch(err) {
+            mostrarMensaje('Error de conexión', 'error');
+          }
+        };
+
+        // AGREGAR MASCOTA (form)
+        if (form) {
+          form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            const orig = btn.textContent;
+            btn.textContent = 'Agregando...';
+            btn.disabled = true;
+            try {
+              const formData = new FormData(form);
+              const caracteristicas = Array.from(formData.getAll('caracteristicas'));
+              const data = {
+                nombre: formData.get('nombre'),
+                especie: formData.get('especie'),
+                raza: formData.get('raza'),
+                edad: formData.get('edad'),
+                edad_unidad: formData.get('edad_unidad'),
+                sexo: formData.get('sexo'),
+                tamano: formData.get('tamano'),
+                descripcion: formData.get('descripcion'),
+                imagen_url: formData.get('imagen_url'),
+                caracteristicas,
+                disponible: formData.get('disponible') === 'on'
+              };
+              const res = await fetch('/api/mascotas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              });
+              const result = await res.json();
+              if (res.ok) {
+                mostrarMensaje(result.message || 'Mascota agregada con éxito', 'success');
+                form.reset();
+                if (previewContainer) previewContainer.classList.add('hidden');
+                document.getElementById('disponible').checked = true;
+              } else {
+                mostrarMensaje(result.error || 'No se pudo agregar la mascota', 'error');
+              }
+            } catch(err) {
+              mostrarMensaje('Error de conexión: ' + err.message, 'error');
+            } finally {
+              btn.textContent = orig;
+              btn.disabled = false;
+            }
+          });
+        }
+
+        // Mensajes UI
+        function mostrarMensaje(texto, tipo) {
+          if (!msg) return;
+          msg.textContent = texto;
+          msg.className = `mt-4 p-4 rounded-md text-sm font-medium ${tipo === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`;
+          msg.classList.remove('hidden');
+          setTimeout(() => { if (msg) msg.classList.add('hidden'); }, 5000);
+        }
+
+        // Event listeners de recarga y búsqueda
+        if (filtroEstado) filtroEstado.addEventListener('change', cargarMascotas);
+        if (btnRefrescar) btnRefrescar.addEventListener('click', cargarMascotas);
+        if (btnRefrescarAdopciones) btnRefrescarAdopciones.addEventListener('click', cargarSolicitudes);
+        if (btnRefrescarContacto) btnRefrescarContacto.addEventListener('click', cargarContacto);
+        if (searchContacto) {
+          let t;
+          searchContacto.addEventListener('input', (e) => {
+            clearTimeout(t);
+            t = setTimeout(() => filtrarContactos(e.target.value), 200);
+          });
+        }
+
+        // Carga inicial si la sección listar está activa
+        if (document.getElementById('seccion-listar')?.classList.contains('seccion-activa')) {
+          cargarMascotas();
+        }
+      });
+    </script>
+
+    <style>
+      .seccion-oculta { display: none; }
+      .seccion-activa { display: block; }
+      .tab-button { transition: all 0.2s ease; }
+      .tab-button.active { /* deja como está */ }
+    </style>
+  </Layout>
+</html>

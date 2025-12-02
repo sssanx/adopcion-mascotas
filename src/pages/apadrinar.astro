@@ -1,0 +1,259 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Usamos la misma API que en adopción pero filtramos para apadrinar
+const response = await fetch(`${Astro.url.origin}/api/mascotas?disponibles=true`);
+let mascotas = [];
+
+if (response.ok) {
+  const data = await response.json();
+  // Filtramos mascotas que pueden ser apadrinadas (todas las disponibles)
+  mascotas = data.mascotas || [];
+} else {
+  console.error("Error fetching mascotas:", response.status);
+}
+---
+
+<Layout title="Mascotas para Apadrinar">
+  <!-- Hero Section estilo Refugia -->
+  <section class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+          Apadrina una
+          <span class="text-[#b0724a] block">Mascota</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+          Tu apoyo mensual transforma vidas. Proporciona alimento, cuidados médicos y mucho amor a mascotas que esperan un hogar.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#mascotas" class="bg-[#b0724a] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#9a6240] transition-colors">
+            Ver Mascotas
+          </a>
+          <a href="#como-funciona" class="border-2 border-[#b0724a] text-[#b0724a] px-8 py-4 rounded-lg font-semibold hover:bg-[#b0724a] hover:text-white transition-colors">
+            Cómo Funciona
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Beneficios -->
+  <section class="bg-[#faf8f6] py-16 border-y border-[#f5e6cc]">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tu Apoyo Marca la Diferencia</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Con tu apadrinamiento mensual, proporcionas:</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-[#b0724a] rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-white text-2xl"></span>
+          </div>
+          <h3 class="text-xl font-semibold text-[#b0724a] mb-3">Alimentación Balanceada</h3>
+          <p class="text-gray-600">Comida de calidad para mantenerlos saludables y fuertes</p>
+        </div>
+        
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-[#b0724a] rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-white text-2xl"></span>
+          </div>
+          <h3 class="text-xl font-semibold text-[#b0724a] mb-3">Atención Veterinaria</h3>
+          <p class="text-gray-600">Vacunas, desparasitación y tratamientos médicos necesarios</p>
+        </div>
+        
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-[#b0724a] rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-white text-2xl"></span>
+          </div>
+          <h3 class="text-xl font-semibold text-[#b0724a] mb-3">Cuidado Diario</h3>
+          <p class="text-gray-600">Hogar temporal seguro con todo lo que necesitan</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mascotas para Apadrinar -->
+  <section id="mascotas" class="max-w-7xl mx-auto py-16 px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Mascotas que Buscan un Padrino</h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Conoce a estos maravillosos compañeros que esperan tu apoyo mensual
+      </p>
+    </div>
+
+    {mascotas.length === 0 ? (
+      <!-- Estado Vacío Mejorado -->
+      <div class="text-center py-20 bg-gradient-to-br from-[#faf8f6] to-[#f5e6cc] rounded-3xl shadow-lg">
+        <div class="text-6xl mb-6"></div>
+        <h3 class="text-2xl text-[#b0724a] mb-4 font-bold">¡Todas las mascotas tienen padrinos!</h3>
+        <p class="text-gray-600 text-lg max-w-md mx-auto mb-8">
+          Gracias a la generosidad de nuestra comunidad. Pronto llegarán más mascotas necesitadas.
+        </p>
+        <a 
+          href="/contacto" 
+          class="inline-block bg-[#b0724a] text-white px-8 py-4 rounded-lg hover:bg-[#9a6240] transition-colors font-semibold"
+        >
+          Notificarme cuando lleguen
+        </a>
+      </div>
+    ) : (
+      <!-- Grid de Mascotas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {mascotas.map((mascota) => (
+          <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200">
+            <!-- Imagen -->
+            <div class="relative overflow-hidden">
+              {mascota.imagen_url ? (
+                <img
+                  src={mascota.imagen_url}
+                  alt={mascota.nombre}
+                  class="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                />
+              ) : (
+                <div class="w-full h-48 bg-gradient-to-br from-[#f5e6cc] to-[#faf8f6] flex items-center justify-center">
+                  <div class="text-center">
+                    <span class="text-4xl mb-3 block">{mascota.especie === 'gato' ? '' : ''}</span>
+                    <span class="text-gray-500">Imagen no disponible</span>
+                  </div>
+                </div>
+              )}
+              
+              <!-- Badge de Apadrinamiento -->
+              <div class="absolute top-3 right-3 bg-[#708c69] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Busca Padrino
+              </div>
+            </div>
+
+            <!-- Contenido de la Tarjeta -->
+            <div class="p-6">
+              <!-- Header de la Mascota -->
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="text-xl font-bold text-[#b0724a] mb-1">{mascota.nombre}</h3>
+                  <p class="text-gray-600 font-medium">
+                    {mascota.raza || "Mestizo"}
+                  </p>
+                </div>
+                {mascota.edad !== null && (
+                  <span class="bg-[#f5e6cc] text-[#b0724a] px-3 py-1 rounded-full text-sm font-semibold">
+                    {mascota.edad} {mascota.edad_unidad || 'años'}
+                  </span>
+                )}
+              </div>
+
+              <!-- Información Básica -->
+              <div class="flex flex-wrap gap-2 mb-4">
+                {mascota.sexo && (
+                  <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                    {mascota.sexo === 'M' ? 'Macho' : 'Hembra'}
+                  </span>
+                )}
+                {mascota.tamano && (
+                  <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                    {mascota.tamano}
+                  </span>
+                )}
+                <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                  {mascota.especie || 'Mascota'}
+                </span>
+              </div>
+
+              <!-- Descripción -->
+              {mascota.descripcion && (
+                <p class="text-gray-600 leading-relaxed mb-6 text-sm line-clamp-3">
+                  {mascota.descripcion}
+                </p>
+              )}
+
+              <!-- Botón de Apadrinar -->
+              <button
+                class="w-full bg-[#b0724a] text-white py-3 px-6 rounded-lg hover:bg-[#9a6240] transition-colors font-semibold"
+                onclick={`apadrinarMascota(${mascota.id}, '${mascota.nombre.replace(/'/g, "\\'")}')`}
+              >
+                Apadrinar a {mascota.nombre}
+              </button>
+
+              <!-- Texto Informativo -->
+              <p class="text-center text-sm text-gray-500 mt-3">
+                Tu apoyo mensual cambia vidas
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <!-- Cómo Funciona -->
+  <section id="como-funciona" class="bg-[#faf8f6] py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">¿Cómo Funciona el Apadrinamiento?</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Un proceso simple para hacer una gran diferencia</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-[#b0724a] text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">1</div>
+          <h3 class="text-lg font-semibold text-[#b0724a] mb-3">Elige</h3>
+          <p class="text-gray-600 text-sm">Selecciona la mascota que quieres apadrinar</p>
+        </div>
+
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-[#b0724a] text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">2</div>
+          <h3 class="text-lg font-semibold text-[#b0724a] mb-3">Contacta</h3>
+          <p class="text-gray-600 text-sm">Completa el formulario de apadrinamiento</p>
+        </div>
+
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-[#b0724a] text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">3</div>
+          <h3 class="text-lg font-semibold text-[#b0724a] mb-3">Contribuye</h3>
+          <p class="text-gray-600 text-sm">Realiza tu aporte mensual</p>
+        </div>
+
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-[#b0724a] text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">4</div>
+          <h3 class="text-lg font-semibold text-[#b0724a] mb-3">Sigue</h3>
+          <p class="text-gray-600 text-sm">Recibe actualizaciones de tu ahijado</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="bg-[#b0724a] text-white py-16 text-center">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Listo para Cambiar una Vida?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        Tu apoyo mensual garantiza que una mascota reciba todo lo que necesita mientras espera su hogar definitivo.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#mascotas" class="bg-white text-[#b0724a] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+          Ver Mascotas Disponibles
+        </a>
+        <a href="/contacto" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-[#b0724a] transition-colors">
+          Más Información
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function apadrinarMascota(id, nombre) {
+      if (confirm(`¿Te gustaría convertirte en padrino/madrina de ${nombre}? 🐾\n\nTu apoyo mensual cubrirá:\n• Alimentación balanceada\n• Atención veterinaria\n• Cuidados básicos\n• Hogar temporal seguro\n\nTe contactaremos para coordinar los detalles y el nivel de apadrinamiento.`)) {
+        window.location.href = `/contacto?tipo=apadrinar&mascota=${id}&nombre=${encodeURIComponent(nombre)}`;
+      }
+    }
+  </script>
+
+  <style>
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</Layout>

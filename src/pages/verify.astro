@@ -1,0 +1,62 @@
+---
+import Layout from "../layouts/Layout.astro";
+const SITE_KEY = "6LfgiukrAAAAAGWoakxqFrzvC5jJc6jPbuQJjTaU";
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Verificación</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  </head>
+  <body class="flex items-center justify-center h-screen bg-gray-100">
+    <div id="captchaContainer" class="bg-white rounded-lg shadow-lg p-10 w-96 flex flex-col items-center animate-fade-in">
+      <h1 class="text-3xl font-bold text-pink-500 mb-6">Verifica que eres humano</h1>
+      
+      <p class="text-gray-700 mb-6 text-center">
+        Para poder acceder a PawConnect, por favor completa el captcha a continuación.
+      </p>
+
+      <form id="captchaForm" class="w-full flex flex-col items-center">
+        <div class="g-recaptcha mb-6" data-sitekey={SITE_KEY}></div>
+        <button 
+          type="submit"
+          class="bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-8 rounded shadow-md hover:shadow-lg transition-all duration-300"
+        >
+          Entrar
+        </button>
+      </form>
+    </div>
+
+    <script>
+      // Redirige al home si ya pasó el captcha
+      if(localStorage.getItem('verified')) {
+        window.location.href = '/index_home';
+      }
+
+      const form = document.getElementById("captchaForm");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const response = grecaptcha.getResponse();
+        if (!response) {
+          alert("Por favor completa el captcha");
+          return;
+        }
+        localStorage.setItem('verified', 'true');
+        window.location.href = '/index_home';
+      });
+    </script>
+
+    <style>
+      /* Animación simple para Material Design feel */
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .animate-fade-in {
+        animation: fade-in 0.6s ease-out;
+      }
+    </style>
+  </body>
+</html>

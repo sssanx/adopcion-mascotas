@@ -1,0 +1,177 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Traer mascotas disponibles desde tu API
+const response = await fetch(`${Astro.url.origin}/api/mascotas?disponibles=true`);
+let mascotas = [];
+
+if (response.ok) {
+  const data = await response.json();
+  mascotas = data.mascotas || [];
+} else {
+  console.error('Error fetching mascotas:', response.status);
+}
+---
+
+<Layout title="Mascotas para Adopción">
+
+  <!-- Título accesible -->
+  <section 
+    class="max-w-6xl mx-auto mt-10 p-6"
+    aria-labelledby="titulo-mascotas"
+  >
+    <h1 
+      id="titulo-mascotas"
+      class="text-3xl font-extrabold mb-8 text-center text-gray-900"
+      tabindex="0"
+    >
+      Mascotas en Busca de Hogar
+    </h1>
+
+    {mascotas.length === 0 ? (
+      <div 
+        class="text-center py-12"
+        role="alert"
+        aria-live="polite"
+      >
+        <p class="text-xl text-gray-700 font-semibold">No hay mascotas disponibles en este momento.</p>
+        <p class="text-gray-600 mt-2">Vuelve más tarde </p>
+      </div>
+    ) : (
+      <div 
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        role="list"
+        aria-label="Lista de mascotas disponibles para adopción"
+      >
+
+        {mascotas.map((mascota) => (
+          <article 
+            role="listitem"
+            tabindex="0"
+            class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-all focus-within:ring-4 focus-within:ring-amber-400"
+            aria-label={`Mascota ${mascota.nombre}`}
+          >
+
+            <!-- Imagen accesible -->
+            {mascota.imagen_url ? (
+              <img 
+                src={mascota.imagen_url} 
+                alt={`Imagen de ${mascota.nombre}, ${mascota.especie}. ${mascota.descripcion || ''}`}
+                class="w-full h-52 object-cover"
+              />
+            ) : (
+              <div 
+                class="w-full h-52 bg-gray-200 flex items-center justify-center"
+                role="img"
+                aria-label={`Sin imagen disponible para ${mascota.nombre}`}
+              >
+                <span class="text-gray-600">Sin imagen</span>
+              </div>
+            )}
+
+            <div class="p-5">
+
+              <div class="flex justify-between items-center mb-4">
+                <div>
+                  <h2 class="text-xl font-bold text-gray-900">{mascota.nombre}</h2>
+                  <p class="text-sm text-amber-700 font-medium capitalize">
+                    {mascota.especie}
+                  </p>
+                </div>
+
+                <span 
+                  class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium"
+                  aria-label="Mascota disponible para adopción"
+                >
+                  Disponible
+                </span>
+              </div>
+
+              <div class="space-y-2 mb-4 text-gray-700 font-medium text-sm">
+
+                <div class="flex flex-wrap gap-2">
+                  {mascota.raza && (
+                    <span class="bg-gray-100 px-2 py-1 rounded shadow-sm">
+                      Raza: {mascota.raza}
+                    </span>
+                  )}
+
+                  {mascota.sexo && (
+                    <span class="bg-gray-100 px-2 py-1 rounded shadow-sm capitalize">
+                      Sexo: {mascota.sexo}
+                    </span>
+                  )}
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  {mascota.edad !== null && (
+                    <span class="bg-gray-100 px-2 py-1 rounded shadow-sm">
+                      Edad: {mascota.edad} {mascota.edad_unidad || 'años'}
+                    </span>
+                  )}
+
+                  {mascota.tamano && (
+                    <span class="bg-gray-100 px-2 py-1 rounded shadow-sm capitalize">
+                      Tamaño: {mascota.tamano}
+                    </span>
+                  )}
+                </div>
+
+              </div>
+
+              {mascota.descripcion && (
+                <p 
+                  class="text-gray-600 text-sm mb-4 line-clamp-2"
+                  aria-label={`Descripción: ${mascota.descripcion}`}
+                >
+                  {mascota.descripcion}
+                </p>
+              )}
+
+              <a
+                href={`/adopcionn?mascota=${mascota.id}&nombre=${encodeURIComponent(mascota.nombre)}`}
+                class="block text-center bg-amber-600 text-white py-3 px-5 rounded-lg font-semibold hover:bg-amber-500 focus:ring-4 focus:ring-amber-300 transition"
+                aria-label={`Iniciar adopción de ${mascota.nombre}`}
+              >
+                Adoptar a {mascota.nombre}
+              </a>
+
+            </div>
+
+          </article>
+        ))}
+
+      </div>
+    )}
+  </section>
+
+  <!-- Accesibilidad visual: enfoque claro -->
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Alto contraste en modo preferido */
+    @media (prefers-contrast: more) {
+      .bg-white {
+        background-color: #fefefe !important;
+      }
+      .text-gray-900 {
+        color: #000 !important;
+      }
+      .text-gray-600 {
+        color: #333 !important;
+      }
+    }
+
+    /* Enfoques visibles accesibles para teclado */
+    *:focus {
+      outline: 3px solid #fbbf24;
+      outline-offset: 4px;
+    }
+  </style>
+
+</Layout>

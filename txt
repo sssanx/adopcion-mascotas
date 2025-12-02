@@ -1,0 +1,38 @@
+ Café cálido (#b0724a): Títulos y botones principales = Confianza
+
+ Beige/Arena (#f5e6cc): Fondos de badges y bordes = Comodidad
+
+ Verde oliva (#708c69): Etiqueta "Adopción" = Crecimiento
+
+ Gris cálido (#757575): Texto descriptivo = Responsabilidad 
+
+ Blanco hueso (#faf8f6): Fondo de las tarjetas = Paz
+
+
+ -----------
+ tablas
+
+ CREATE TABLE mascotas (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    raza VARCHAR(50),
+    edad INT,
+    descripcion TEXT,
+    imagen_url VARCHAR(255),
+    disponible BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    fecha_registro TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE adopciones (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id),
+    mascota_id INT REFERENCES mascotas(id),
+    fecha_adopcion TIMESTAMP DEFAULT NOW()
+);

@@ -1,0 +1,107 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Contacto">
+  <section class="max-w-4xl mx-auto p-6 mt-10 grid md:grid-cols-2 gap-8">
+
+    <!-- Información -->
+    <div class="bg-white p-6 shadow rounded-lg">
+      <h1 class="text-3xl font-bold text-amber-600 mb-4">Contacto</h1>
+      <p class="text-gray-700 mb-4">
+        Si tienes dudas, quieres colaborar o necesitas información adicional, 
+        contáctanos y te responderemos lo antes posible.
+      </p>
+
+      <div class="space-y-2 text-gray-700">
+        <p><b> Dirección:</b> Calle aldama, El Carmen Tequexquitla, Tlaxcala</p>
+        <p><b> Teléfono:</b> +52 555 555 555</p>
+        <p><b> Correo:</b> migueel@gmail.com</p>
+        <p><b> Horario:</b> Lunes a Sábado · 9 AM - 6 PM</p>
+      </div>
+
+      <div class="flex space-x-4 mt-4 text-2xl text-amber-600">
+        <a href="#" class="hover:text-amber-500"></a>
+        <a href="#" class="hover:text-amber-500"></a>
+        <a href="#" class="hover:text-amber-500"></a>
+        <a href="#" class="hover:text-amber-500"></a>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="bg-white p-6 shadow rounded-lg">
+      <h2 class="text-2xl font-semibold mb-4">Envíanos un mensaje</h2>
+
+      <form id="form-contacto" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Nombre *</label>
+          <input type="text" name="nombre" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Correo *</label>
+          <input type="email" name="email" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Teléfono</label>
+          <input type="text" name="telefono" class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Asunto</label>
+          <select name="asunto" class="w-full border rounded px-3 py-2">
+            <option value="">Selecciona una opción</option>
+            <option value="adopcion">Consulta sobre adopción</option>
+            <option value="apadrinar">Apadrinamiento</option>
+            <option value="donaciones">Donaciones</option>
+            <option value="voluntariado">Voluntariado</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Mensaje *</label>
+          <textarea name="mensaje" required class="w-full border rounded px-3 py-2" rows="4"></textarea>
+        </div>
+
+        <button class="w-full bg-amber-500 text-white py-2 rounded hover:bg-amber-400">
+          Enviar mensaje
+        </button>
+      </form>
+
+      <p id="msg-contacto" class="mt-4 hidden text-center font-medium"></p>
+    </div>
+
+  </section>
+
+  <script>
+    const form = document.getElementById("form-contacto");
+    const msg = document.getElementById("msg-contacto");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = Object.fromEntries(new FormData(form));
+
+      const res = await fetch("/api/contacto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      msg.classList.remove("hidden");
+
+      if (result.success) {
+        msg.textContent = "Mensaje enviado correctamente ✔";
+        msg.className = "mt-4 text-green-600 font-medium";
+        form.reset();
+      } else {
+        msg.textContent = "Error: " + result.error;
+        msg.className = "mt-4 text-red-600 font-medium";
+      }
+    });
+  </script>
+</Layout>

@@ -1,0 +1,145 @@
+---
+// src/pages/admin/login.astro
+---
+
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-50">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Admin Mascotas</title>
+  </head>
+  <body class="h-full">
+    <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="text-center">
+          <h2 class="text-3xl font-bold text-gray-900">Admin Mascotas</h2>
+          <p class="mt-2 text-sm text-gray-600">Sistema de gestión de adopciones</p>
+        </div>
+
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <form class="space-y-6" id="loginForm">
+              <div>
+                <label for="usuario" class="block text-sm font-medium text-gray-700">
+                  Usuario
+                </label>
+                <div class="mt-1">
+                  <input 
+                    id="usuario" 
+                    name="usuario" 
+                    type="text" 
+                    required 
+                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+                    placeholder="Ingrese su usuario">
+                </div>
+              </div>
+
+              <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">
+                  Contraseña
+                </label>
+                <div class="mt-1">
+                  <input 
+                    id="password" 
+                    name="password" 
+                    type="password" 
+                    required 
+                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+                    placeholder="Ingrese su contraseña">
+                </div>
+              </div>
+
+              <div id="loginError" class="hidden">
+                <div class="bg-red-50 border border-red-200 rounded-md p-4">
+                  <div class="flex">
+                    <div class="flex-shrink-0">
+                      <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-red-800" id="errorMessage"></h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button 
+                  type="submit"
+                  class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                  Iniciar Sesión
+                </button>
+              </div>
+            </form>
+
+            <div class="mt-6">
+              <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                  <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                  <span class="px-2 bg-white text-gray-500">Credenciales por defecto</span>
+                </div>
+              </div>
+
+              <div class="mt-3 text-center">
+                <p class="text-xs text-gray-500">
+                  Usuario: admin | Contraseña: admin123
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const usuario = formData.get('usuario');
+        const password = formData.get('password');
+        
+        const button = this.querySelector('button[type="submit"]');
+        const originalText = button.textContent;
+        button.textContent = 'Iniciando sesión...';
+        button.disabled = true;
+        
+        const errorDiv = document.getElementById('loginError');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        try {
+          // Simular verificación de credenciales
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Credenciales por defecto (en producción esto sería una verificación con el backend)
+          if (usuario === 'admin' && password === 'admin123') {
+            localStorage.setItem('adminToken', 'token_simulado_' + Date.now());
+            localStorage.setItem('adminUsuario', usuario);
+            window.location.href = '/admin';
+          } else {
+            throw new Error('Credenciales incorrectas');
+          }
+          
+        } catch (error) {
+          errorMessage.textContent = error.message;
+          errorDiv.classList.remove('hidden');
+        } finally {
+          button.textContent = originalText;
+          button.disabled = false;
+        }
+      });
+
+      // Si ya está autenticado, redirigir al admin
+      document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('adminToken');
+        if (token) {
+          window.location.href = '/admins/admin';
+        }
+      });
+    </script>
+  </body>
+</html>

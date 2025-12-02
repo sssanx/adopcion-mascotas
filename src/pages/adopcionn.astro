@@ -1,0 +1,159 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const mascotaId = Astro.url.searchParams.get("mascota");
+const mascotaNombre = Astro.url.searchParams.get("nombre");
+---
+
+<Layout title="Formulario de Adopción">
+  <section 
+    class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl border border-gray-200"
+    aria-labelledby="titulo-formulario"
+  >
+    <h1 
+      id="titulo-formulario"
+      class="text-3xl font-extrabold mb-6 text-center text-amber-700"
+      tabindex="0"
+    >
+      Formulario de Adopción
+    </h1>
+    
+    {mascotaNombre && (
+      <p 
+        class="text-center mb-4 text-gray-700"
+        aria-live="polite"
+      >
+        Estás solicitando adoptar a <span class="font-semibold">{mascotaNombre}</span>.
+      </p>
+    )}
+
+    <form 
+      method="POST" 
+      action="/api/adopciones" 
+      class="space-y-4"
+      aria-describedby="instrucciones-form"
+    >
+
+      <p 
+        id="instrucciones-form"
+        class="sr-only"
+      >
+        Completa los siguientes campos obligatorios para enviar tu solicitud de adopción.
+      </p>
+
+      <!-- Campos ocultos -->
+      <input type="hidden" name="mascota_id" value={mascotaId || ""} />
+
+      <!-- NOMBRE -->
+      <div>
+        <label for="nombre" class="block text-sm font-medium text-gray-800 mb-1">
+          Tu nombre completo *
+        </label>
+        <input 
+          id="nombre"
+          type="text" 
+          name="nombre_solicitante" 
+          required 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-4 focus:ring-amber-300 focus:border-amber-500 shadow-sm"
+          placeholder="Ingresa tu nombre completo"
+          aria-required="true"
+        />
+      </div>
+
+      <!-- EMAIL -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-800 mb-1">
+          Correo electrónico *
+        </label>
+        <input 
+          id="email"
+          type="email" 
+          name="email_solicitante" 
+          required 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-4 focus:ring-amber-300 focus:border-amber-500 shadow-sm"
+          placeholder="tu@email.com"
+          aria-required="true"
+        />
+      </div>
+
+      <!-- TELÉFONO -->
+      <div>
+        <label for="telefono" class="block text-sm font-medium text-gray-800 mb-1">
+          Teléfono (opcional)
+        </label>
+        <input 
+          id="telefono"
+          type="tel" 
+          name="telefono_solicitante" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-4 focus:ring-amber-300 focus:border-amber-500 shadow-sm"
+          placeholder="+52 123 456 7890"
+          aria-describedby="descripcion-telefono"
+        />
+        <small id="descripcion-telefono" class="text-gray-500 text-xs">
+          Puedes dejarlo vacío si lo prefieres.
+        </small>
+      </div>
+
+      <!-- MENSAJE -->
+      <div>
+        <label for="mensaje" class="block text-sm font-medium text-gray-800 mb-1">
+          Mensaje (opcional)
+        </label>
+        <textarea 
+          id="mensaje"
+          name="mensaje" 
+          rows="4" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-4 focus:ring-amber-300 focus:border-amber-500 shadow-sm"
+          placeholder="Cuéntanos por qué quieres adoptar esta mascota..."
+        ></textarea>
+      </div>
+
+      <!-- BOTÓN -->
+      <button 
+        type="submit" 
+        class="w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-500 focus:ring-4 focus:ring-amber-300 transition font-semibold shadow-md"
+        aria-label="Enviar solicitud de adopción"
+      >
+        Enviar solicitud de adopción
+      </button>
+    </form>
+
+    <p class="text-sm text-gray-600 mt-4 text-center">
+      * Campos obligatorios
+    </p>
+  </section>
+
+  <!-- Estilos accesibles -->
+  <style>
+    /* Texto oculto accesible */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Aumentar visibilidad del foco teclado */
+    *:focus {
+      outline: 3px solid #fbbf24;
+      outline-offset: 4px;
+    }
+
+    /* Modo de alto contraste */
+    @media (prefers-contrast: more) {
+      body {
+        background: #fff !important;
+      }
+      .text-gray-800 {
+        color: #000 !important;
+      }
+      .border-gray-300 {
+        border-color: #000 !important;
+      }
+    }
+  </style>
+</Layout>

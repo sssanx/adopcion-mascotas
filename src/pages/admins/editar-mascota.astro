@@ -1,0 +1,366 @@
+---
+// src/pages/admin/editar-mascota.astro
+import Layout from "../../layouts/Layout.astro";
+
+// Obtener ID de la URL
+const url = new URL(Astro.request.url);
+const id = url.searchParams.get('id');
+
+let mascota = null;
+let error = null;
+
+if (id) {
+  try {
+    const response = await fetch(`${Astro.url.origin}/api/mascotas/${id}`);
+    if (response.ok) {
+      const data = await response.json();
+      mascota = data.mascota;
+    } else {
+      error = 'Mascota no encontrada';
+    }
+  } catch (err) {
+    error = 'Error al cargar la mascota';
+    console.error('Error:', err);
+  }
+} else {
+  error = 'ID de mascota no especificado';
+}
+---
+
+<Layout title={mascota ? `Editar ${mascota.nombre}` : 'Editar Mascota'}>
+  <div class="max-w-4xl mx-auto mt-10 p-6">
+    <div class="bg-white shadow rounded-lg p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">
+          {mascota ? `Editar ${mascota.nombre}` : 'Editar Mascota'}
+        </h1>
+        <a href="/admin" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-400 transition">
+          ← Volver
+        </a>
+      </div>
+
+      {error ? (
+        <div class="text-center py-8">
+          <p class="text-red-600 text-xl mb-4">{error}</p>
+          <a href="/admin" class="text-amber-600 hover:text-amber-500">
+            Volver al administrador
+          </a>
+        </div>
+      ) : mascota ? (
+        <form id="formEditarMascota" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <input type="hidden" name="id" value={mascota.id} />
+          
+          <!-- Columna 1 -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                value={mascota.nombre}
+                class="border p-2 rounded w-full" 
+                required 
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Especie *</label>
+              <select name="especie" class="border p-2 rounded w-full" required>
+                <option value="">Seleccionar especie</option>
+                <option value="perro" selected={mascota.especie === 'perro'}>Perro</option>
+                <option value="gato" selected={mascota.especie === 'gato'}>Gato</option>
+                <option value="conejo" selected={mascota.especie === 'conejo'}>Conejo</option>
+                <option value="ave" selected={mascota.especie === 'ave'}>Ave</option>
+                <option value="otro" selected={mascota.especie === 'otro'}>Otro</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Raza</label>
+              <input 
+                type="text" 
+                name="raza" 
+                value={mascota.raza || ''}
+                class="border p-2 rounded w-full" 
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Edad</label>
+              <div class="flex space-x-2">
+                <input 
+                  type="number" 
+                  name="edad" 
+                  value={mascota.edad || ''}
+                  min="0" max="30" 
+                  class="border p-2 rounded w-full" 
+                />
+                <select name="edad_unidad" class="border p-2 rounded">
+                  <option value="años" selected={mascota.edad_unidad === 'años'}>Años</option>
+                  <option value="meses" selected={mascota.edad_unidad === 'meses'}>Meses</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Sexo</label>
+              <div class="flex space-x-4">
+                <label class="flex items-center">
+                  <input 
+                    type="radio" 
+                    name="sexo" 
+                    value="macho" 
+                    checked={mascota.sexo === 'macho'}
+                    class="mr-2" 
+                  />
+                  Macho
+                </label>
+                <label class="flex items-center">
+                  <input 
+                    type="radio" 
+                    name="sexo" 
+                    value="hembra" 
+                    checked={mascota.sexo === 'hembra'}
+                    class="mr-2" 
+                  />
+                  Hembra
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 2 -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño</label>
+              <select name="tamano" class="border p-2 rounded w-full">
+                <option value="">Seleccionar tamaño</option>
+                <option value="pequeño" selected={mascota.tamano === 'pequeño'}>Pequeño (1-10 kg)</option>
+                <option value="mediano" selected={mascota.tamano === 'mediano'}>Mediano (11-25 kg)</option>
+                <option value="grande" selected={mascota.tamano === 'grande'}>Grande (26+ kg)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">URL de la imagen</label>
+              <input 
+                type="text" 
+                name="imagen_url" 
+                value={mascota.imagen_url || ''}
+                class="border p-2 rounded w-full" 
+              />
+              {mascota.imagen_url && (
+                <div class="mt-2">
+                  <img 
+                    src={mascota.imagen_url} 
+                    alt={mascota.nombre}
+                    class="w-32 h-32 object-cover rounded border"
+                  />
+                </div>
+              )}
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+              <textarea 
+                name="descripcion" 
+                class="border p-2 rounded w-full" 
+                rows="3"
+              >{mascota.descripcion || ''}</textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Características</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    name="caracteristicas" 
+                    value="vacunado" 
+                    checked={mascota.caracteristicas?.includes('vacunado')}
+                    class="mr-2" 
+                  />
+                  Vacunado
+                </label>
+                <label class="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    name="caracteristicas" 
+                    value="esterilizado" 
+                    checked={mascota.caracteristicas?.includes('esterilizado')}
+                    class="mr-2" 
+                  />
+                  Esterilizado
+                </label>
+                <label class="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    name="caracteristicas" 
+                    value="desparasitado" 
+                    checked={mascota.caracteristicas?.includes('desparasitado')}
+                    class="mr-2" 
+                  />
+                  Desparasitado
+                </label>
+                <label class="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    name="caracteristicas" 
+                    value="microchip" 
+                    checked={mascota.caracteristicas?.includes('microchip')}
+                    class="mr-2" 
+                  />
+                  Microchip
+                </label>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                name="disponible" 
+                id="disponible" 
+                checked={mascota.disponible}
+                class="rounded" 
+              />
+              <label for="disponible" class="text-sm font-medium text-gray-700">
+                Disponible para adopción
+              </label>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="md:col-span-2 flex space-x-4 pt-4">
+            <button 
+              type="button" 
+              onclick="window.location.href='/admin'"
+              class="flex-1 bg-gray-500 text-white py-3 px-6 rounded hover:bg-gray-400 transition font-medium"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="flex-1 bg-amber-500 text-white py-3 px-6 rounded hover:bg-amber-400 transition font-medium"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      ) : null}
+
+      <p id="msg" class="mt-4 font-medium hidden"></p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('formEditarMascota');
+    const msg = document.getElementById('msg');
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+
+        // Mostrar estado de carga
+        submitButton.textContent = 'Guardando...';
+        submitButton.disabled = true;
+
+        try {
+          const formData = new FormData(form);
+          const caracteristicas = Array.from(formData.getAll('caracteristicas'));
+          
+          const data = {
+            id: parseInt(formData.get('id')),
+            nombre: formData.get('nombre'),
+            especie: formData.get('especie'),
+            raza: formData.get('raza'),
+            edad: formData.get('edad'),
+            edad_unidad: formData.get('edad_unidad'),
+            sexo: formData.get('sexo'),
+            tamano: formData.get('tamano'),
+            descripcion: formData.get('descripcion'),
+            imagen_url: formData.get('imagen_url'),
+            caracteristicas: caracteristicas,
+            disponible: formData.get('disponible') === 'on'
+          };
+
+          const res = await fetch('/api/mascotas', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+          });
+
+          const result = await res.json();
+
+          if (res.ok) {
+            mostrarMensaje('✅ ' + result.message, 'success');
+            // Redirigir después de 2 segundos
+            setTimeout(() => {
+              window.location.href = '/admin';
+            }, 2000);
+          } else {
+            mostrarMensaje('❌ Error: ' + result.error, 'error');
+          }
+        } catch (error) {
+          console.error('Error guardando:', error);
+          mostrarMensaje('❌ Error de conexión', 'error');
+        } finally {
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      });
+    }
+
+    function mostrarMensaje(texto, tipo) {
+      if (!msg) return;
+      
+      msg.textContent = texto;
+      msg.className = `mt-4 font-medium ${tipo === 'success' ? 'text-green-600' : 'text-red-600'}`;
+      msg.classList.remove('hidden');
+      
+      setTimeout(() => {
+        msg.classList.add('hidden');
+      }, 5000);
+    }
+
+    // Actualizar selects para que muestren el valor correcto
+    document.addEventListener('DOMContentLoaded', function() {
+      // Especie
+      const especieSelect = document.querySelector('select[name="especie"]');
+      if (especieSelect) {
+        const options = especieSelect.options;
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].hasAttribute('selected')) {
+            options[i].selected = true;
+            break;
+          }
+        }
+      }
+
+      // Edad unidad
+      const edadUnidadSelect = document.querySelector('select[name="edad_unidad"]');
+      if (edadUnidadSelect) {
+        const options = edadUnidadSelect.options;
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].hasAttribute('selected')) {
+            options[i].selected = true;
+            break;
+          }
+        }
+      }
+
+      // Tamaño
+      const tamanoSelect = document.querySelector('select[name="tamano"]');
+      if (tamanoSelect) {
+        const options = tamanoSelect.options;
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].hasAttribute('selected')) {
+            options[i].selected = true;
+            break;
+          }
+        }
+      }
+    });
+  </script>
+</Layout>

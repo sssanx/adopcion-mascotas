@@ -1,0 +1,358 @@
+---
+import Layout from "../layouts/Layout.astro";
+import 'flowbite';
+
+// Cargar mascotas REALES desde tu API
+let mascotas = [];
+try {
+  const response = await fetch(`${Astro.url.origin}/api/mascotas?disponibles=true`);
+  if (response.ok) {
+    const data = await response.json();
+    mascotas = data.mascotas || [];
+  } else {
+    console.error("Error al obtener mascotas:", response.status);
+  }
+} catch (error) {
+  console.error("Error fetch mascotas:", error);
+}
+---
+
+<Layout>
+
+  <script>
+    if (!localStorage.getItem('verified')) {
+      window.location.href = '/verify';
+    }
+    
+    // Mejoras de accesibilidad
+    document.addEventListener('DOMContentLoaded', function() {
+      // Añadir funcionalidad de alto contraste
+      const toggleContrastBtn = document.getElementById('toggle-contrast');
+      if (toggleContrastBtn) {
+        toggleContrastBtn.addEventListener('click', function() {
+          document.body.classList.toggle('high-contrast');
+          const isHighContrast = document.body.classList.contains('high-contrast');
+          localStorage.setItem('highContrast', isHighContrast);
+        });
+      }
+      
+      // Añadir funcionalidad de aumentar texto
+      const increaseTextBtn = document.getElementById('increase-text');
+      const decreaseTextBtn = document.getElementById('decrease-text');
+      const resetTextBtn = document.getElementById('reset-text');
+      
+      if (increaseTextBtn && decreaseTextBtn && resetTextBtn) {
+        increaseTextBtn.addEventListener('click', function() {
+          changeFontSize(1);
+        });
+        
+        decreaseTextBtn.addEventListener('click', function() {
+          changeFontSize(-1);
+        });
+        
+        resetTextBtn.addEventListener('click', function() {
+          resetFontSize();
+        });
+      }
+      
+      // Verificar preferencias guardadas
+      if (localStorage.getItem('highContrast') === 'true') {
+        document.body.classList.add('high-contrast');
+      }
+      
+      const savedFontSize = localStorage.getItem('fontSize');
+      if (savedFontSize) {
+        document.documentElement.style.fontSize = savedFontSize;
+      }
+    });
+    
+    function changeFontSize(direction) {
+      const html = document.documentElement;
+      const currentSize = parseFloat(getComputedStyle(html).fontSize);
+      const newSize = currentSize + (direction * 2);
+      
+      // Limitar el tamaño entre 12px y 24px
+      if (newSize >= 12 && newSize <= 24) {
+        html.style.fontSize = newSize + 'px';
+        localStorage.setItem('fontSize', newSize + 'px');
+      }
+    }
+    
+    function resetFontSize() {
+      document.documentElement.style.fontSize = '16px';
+      localStorage.setItem('fontSize', '16px');
+    }
+  </script>
+
+  <!-- Barra de accesibilidad -->
+  <div class="accessibility-bar bg-gray-800 text-white p-2 text-sm">
+    <div class="container mx-auto flex flex-wrap justify-end gap-4">
+      <button id="toggle-contrast" class="flex items-center gap-1 hover:underline focus:outline-none focus:ring-2 focus:ring-white rounded px-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        Alto contraste
+      </button>
+      <div class="flex items-center gap-1">
+        <span class="mr-1">Tamaño texto:</span>
+        <button id="decrease-text" class="px-2 hover:bg-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-white" aria-label="Disminuir tamaño de texto">A-</button>
+        <button id="reset-text" class="px-2 hover:bg-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-white" aria-label="Tamaño de texto normal">A</button>
+        <button id="increase-text" class="px-2 hover:bg-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-white" aria-label="Aumentar tamaño de texto">A+</button>
+      </div>
+      <button id="skip-to-content" class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-yellow-500 text-black p-2 z-50" onclick="document.getElementById('main-content').focus()">
+        Saltar al contenido principal
+      </button>
+    </div>
+  </div>
+
+  <!-- Sección Hero -->
+  <section class="relative w-full h-screen flex items-center justify-center overflow-hidden font-[Poppins]" aria-labelledby="hero-title">
+    <div class="absolute inset-0 bg-center bg-cover animate-zoomSlow"
+      style="background-image: url('/images/carousel/p7.avif');" role="img" aria-label="Perro y gato esperando ser adoptados">
+    </div>
+
+    <div class="absolute inset-0 bg-black/30"></div>
+
+    <div class="relative z-10 text-center px-6">
+      <h1 id="hero-title" class="text-5xl md:text-6xl font-extrabold text-amber-100 mb-6">¡Adopta y cambia una vida!</h1>
+      <p class="text-xl md:text-2xl text-amber-50 mb-10 max-w-2xl mx-auto">
+        Brinda un hogar lleno de amor a quien te espera con el corazón abierto.
+      </p>
+      <a href="/adopcion"
+        class="inline-block px-8 py-4 bg-amber-200/90 text-stone-800 font-semibold rounded-full text-lg hover:bg-amber-100 transition-all duration-500 transform hover:scale-105 shadow-md focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-opacity-50"
+        aria-label="Ver todas las mascotas disponibles para adopción">
+        Ver mascotas en adopción
+      </a>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE MASCOTAS REALES -->
+  <main id="main-content" tabindex="-1" class="py-12">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-2 text-[#b0724a]">Nuestras Mascotas Buscan Hogar</h2>
+      <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+        Conoce a estos maravillosos compañeros que esperan una familia que los ame. Cada uno tiene una historia única y mucho amor para dar.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        {mascotas.length === 0 ? (
+          <div class="text-center text-gray-500 w-full col-span-3 py-12">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-xl">No hay mascotas disponibles en este momento.</p>
+            <p class="mt-2">Vuelve pronto para conocer a nuestros nuevos amigos.</p>
+          </div>
+        ) : (
+          mascotas.map((m, index) => (
+            <article 
+              class="bg-[#faf8f6] shadow-lg rounded-xl p-5 border border-[#f5e6cc] transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden"
+              aria-labelledby={`pet-name-${index}`}
+            >
+
+              <div class="relative overflow-hidden rounded-lg mb-5">
+                <img 
+                  src={m.imagen_url || "/images/default.png"} 
+                  alt={`Fotografía de ${m.nombre}, ${m.raza || 'mascota'} ${m.edad ? `de ${m.edad} ${m.edad_unidad || 'años'}` : ''} buscando hogar`}
+                  class="w-full h-48 object-cover transition-transform hover:scale-105"
+                  loading="lazy"
+                />
+                <div class={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-semibold ${m.disponible ? "bg-[#708c69] text-white" : "bg-gray-500 text-white"}`}>
+                  {m.disponible ? "En Adopción" : "No disponible"}
+                </div>
+              </div>
+
+              <h3 id={`pet-name-${index}`} class="font-serif text-2xl font-bold text-[#b0724a] mb-2">{m.nombre}</h3>
+
+              <div class="flex flex-wrap gap-2 mb-4">
+                {m.raza && <span class="bg-[#f5e6cc] text-[#b0724a] px-3 py-1 rounded-full text-sm">{m.raza}</span>}
+                {m.edad !== null && (
+                  <span class="bg-[#f5e6cc] text-[#b0724a] px-3 py-1 rounded-full text-sm">
+                    {m.edad} {m.edad_unidad || "años"}
+                  </span>
+                )}
+                {m.sexo && (
+                  <span class="bg-[#f5e6cc] text-[#b0724a] px-3 py-1 rounded-full text-sm">
+                    {m.sexo === 'M' ? 'Macho' : 'Hembra'}
+                  </span>
+                )}
+              </div>
+
+              <p class="text-[#757575] mb-5 line-clamp-2">{m.descripcion || "Esta adorable mascota está buscando un hogar permanente donde recibir todo el amor y cuidado que merece."}</p>
+
+              <button 
+                onclick={`window.location.href='/adopcionn?mascota=${m.id}&nombre=${encodeURIComponent(m.nombre)}'`}
+                class="w-full bg-[#b0724a] text-white py-3 rounded-lg hover:bg-[#9a6240] transition-all focus:outline-none focus:ring-4 focus:ring-[#b0724a] focus:ring-opacity-50 font-semibold"
+                aria-label={`Conocer más sobre ${m.nombre}`}
+                {m.disponible ? '' : 'disabled'}
+              >
+                {m.disponible ? `Conocer a ${m.nombre}` : 'Próximamente'}
+              </button>
+
+            </article>
+          ))
+        )}
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Información adicional sobre adopción -->
+  <section class="bg-[#f5e6cc] py-12 mt-12" aria-labelledby="adoption-info">
+    <div class="container mx-auto px-4">
+      <h2 id="adoption-info" class="text-3xl font-bold text-center mb-8 text-[#b0724a]">El Proceso de Adopción</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6 bg-white rounded-lg shadow-md">
+          <div class="bg-[#b0724a] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">1</div>
+          <h3 class="text-xl font-semibold mb-3 text-[#b0724a]">Conoce a la mascota</h3>
+          <p class="text-gray-700">Visita nuestro centro o agenda una cita para conocer personalmente a tu posible nuevo compañero.</p>
+        </div>
+        <div class="text-center p-6 bg-white rounded-lg shadow-md">
+          <div class="bg-[#b0724a] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">2</div>
+          <h3 class="text-xl font-semibold mb-3 text-[#b0724a]">Completa la solicitud</h3>
+          <p class="text-gray-700">Llena nuestro formulario de adopción para asegurarnos de que es la mascota ideal para tu hogar.</p>
+        </div>
+        <div class="text-center p-6 bg-white rounded-lg shadow-md">
+          <div class="bg-[#b0724a] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">3</div>
+          <h3 class="text-xl font-semibold mb-3 text-[#b0724a]">Llévala a casa</h3>
+          <p class="text-gray-700">Una vez aprobada tu solicitud, podrás llevar a tu nueva mascota a su hogar para siempre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes zoomSlow {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .animate-zoomSlow { animation: zoomSlow 18s ease-in-out infinite; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    /* Estilos de accesibilidad */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    /* Modo alto contraste */
+    .high-contrast {
+      --text-color: #ffffff;
+      --bg-color: #000000;
+      --accent-color: #ffff00;
+      --secondary-color: #00ffff;
+    }
+    
+    .high-contrast body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    
+    .high-contrast .bg-amber-100,
+    .high-contrast .bg-amber-200\/90,
+    .high-contrast .bg-amber-50 {
+      background-color: var(--accent-color) !important;
+      color: var(--bg-color) !important;
+    }
+    
+    .high-contrast .text-amber-100,
+    .high-contrast .text-amber-50,
+    .high-contrast .text-stone-800 {
+      color: var(--bg-color) !important;
+    }
+    
+    .high-contrast .bg-\[\#b0724a\] {
+      background-color: var(--accent-color) !important;
+      color: var(--bg-color) !important;
+    }
+    
+    .high-contrast .text-\[\#b0724a\] {
+      color: var(--accent-color) !important;
+    }
+    
+    .high-contrast .bg-\[\#faf8f6\] {
+      background-color: var(--bg-color) !important;
+      color: var(--text-color) !important;
+      border-color: var(--accent-color) !important;
+    }
+    
+    .high-contrast .text-\[\#757575\] {
+      color: var(--text-color) !important;
+    }
+    
+    .high-contrast .bg-\[\#f5e6cc\] {
+      background-color: var(--secondary-color) !important;
+      color: var(--bg-color) !important;
+    }
+    
+    /* Mejoras para daltonismo */
+    /* Usar patrones además de colores para distinguir elementos */
+    .availability-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    
+    .available {
+      background-color: #22c55e; /* Verde */
+    }
+    
+    .not-available {
+      background-color: #ef4444; /* Rojo */
+      position: relative;
+    }
+    
+    .not-available::after {
+      content: "✕";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 8px;
+      font-weight: bold;
+    }
+    
+    /* Mejoras de enfoque para navegación por teclado */
+    button:focus, 
+    a:focus {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+    }
+    
+    /* Mejoras de legibilidad */
+    .text-content {
+      line-height: 1.6;
+    }
+    
+    /* Mejoras para reducir movimiento */
+    @media (prefers-reduced-motion: reduce) {
+      .animate-zoomSlow,
+      .transition-all,
+      .hover\:scale-105:hover,
+      .hover\:-translate-y-1:hover {
+        animation: none;
+        transition: none;
+        transform: none;
+      }
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+</Layout>

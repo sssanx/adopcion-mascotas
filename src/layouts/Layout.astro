@@ -1,0 +1,171 @@
+---
+import "../styles/global.css";
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PawConnect </title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .font-serif { font-family: 'Playfair Display', serif; }
+    .font-sans { font-family: 'Poppins', sans-serif; }
+
+    .nav-link { position: relative; overflow: hidden; transition: all 0.3s ease; }
+    .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px; background-color: #b0724a; transition: width 0.3s ease; border-radius: 2px; }
+    .nav-link:hover { color: #b0724a; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: #b0724a; }
+    .nav-link.active::after { width: 100%; }
+
+    .mobile-menu { transform: translateX(-100%); transition: transform 0.3s ease; }
+    .mobile-menu.open { transform: translateX(0); }
+  </style>
+</head>
+<body class="bg-[#faf8f6] text-[#757575] font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow-lg p-6 flex justify-between items-center border-b-4 border-[#708c69]">
+    <div class="flex items-center gap-3">
+      <h1 class="text-3xl font-serif font-bold text-[#b0724a] tracking-tight">PawConnect</h1>
+      <span class="text-2xl"></span>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:block">
+      <ul class="flex gap-8 text-[#757575] font-medium">
+        <li><a href="/" class="nav-link active py-2 px-1 flex items-center"><i class="fas fa-home mr-2 text-[#708c69]"></i>Inicio</a></li>
+        <li><a href="/adopcion" class="nav-link py-2 px-1 flex items-center"><i class="fas fa-paw mr-2 text-[#708c69]"></i>Adoptar</a></li>
+        <li><a href="/apadrinar" class="nav-link py-2 px-1 flex items-center"><i class="fas fa-hand-holding-heart mr-2 text-[#708c69]"></i>Apadrinar</a></li>
+        <li><a href="/donar" class="nav-link py-2 px-1 flex items-center"><i class="fas fa-donate mr-2 text-[#708c69]"></i>Donar</a></li>
+        <li><a href="/contacto" class="nav-link py-2 px-1 flex items-center"><i class="fas fa-envelope mr-2 text-[#708c69]"></i>Contacto</a></li>
+      </ul>
+    </nav>
+
+    <!-- CTA Button -->
+    <div class="hidden md:flex gap-4">
+      <button class="bg-[#b0724a] hover:bg-[#9a6240] text-white px-6 py-2 rounded-full font-medium flex items-center gap-2 transition-colors duration-300">
+        <i class="fas fa-heart"></i> Adoptar Ahora
+      </button>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-button" class="md:hidden text-[#757575] focus:outline-none">
+      <i class="fas fa-bars text-2xl"></i>
+    </button>
+  </header>
+
+  <!-- Mobile Navigation -->
+  <div id="mobile-menu" class="mobile-menu md:hidden absolute top-full left-0 w-full bg-white shadow-xl py-6 px-6 z-50 border-t-2 border-[#f5e6cc]">
+    <ul class="space-y-4">
+      <li><a href="/" class="block py-3 px-4 text-[#757575] hover:bg-[#f5e6cc] hover:text-[#b0724a] rounded-lg flex items-center transition-colors"><i class="fas fa-home mr-3 text-[#708c69]"></i>Inicio</a></li>
+      <li><a href="/adopcion" class="block py-3 px-4 text-[#757575] hover:bg-[#f5e6cc] hover:text-[#b0724a] rounded-lg flex items-center transition-colors"><i class="fas fa-paw mr-3 text-[#708c69]"></i>Adoptar</a></li>
+      <li><a href="/apadrinar" class="block py-3 px-4 text-[#757575] hover:bg-[#f5e6cc] hover:text-[#b0724a] rounded-lg flex items-center transition-colors"><i class="fas fa-hand-holding-heart mr-3 text-[#708c69]"></i>Apadrinar</a></li>
+      <li><a href="/donar" class="block py-3 px-4 text-[#757575] hover:bg-[#f5e6cc] hover:text-[#b0724a] rounded-lg flex items-center transition-colors"><i class="fas fa-donate mr-3 text-[#708c69]"></i>Donar</a></li>
+      <li><a href="/contacto" class="block py-3 px-4 text-[#757575] hover:bg-[#f5e6cc] hover:text-[#b0724a] rounded-lg flex items-center transition-colors"><i class="fas fa-envelope mr-3 text-[#708c69]"></i>Contacto</a></li>
+      <li class="pt-4 border-t border-[#f5e6cc]">
+        <button class="w-full bg-[#b0724a] hover:bg-[#9a6240] text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors duration-300">
+          <i class="fas fa-heart"></i> Adoptar Ahora
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-8">
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white shadow-inner p-6 text-center text-[#757575] text-sm border-t-4 border-[#f5e6cc]">
+    © 2025 PawConnect. Todos los derechos reservados.
+  </footer>
+
+  <!-- Chatbot Flotante -->
+  <button id="chat-toggle" class="fixed bottom-6 right-6 bg-amber-500 text-white p-4 rounded-full shadow-lg z-50">💬</button>
+  <div id="chat-box" role="dialog" aria-label="Asistente virtual de adopción" class="fixed bottom-20 right-6 w-80 bg-white shadow-lg rounded-xl hidden flex-col z-50">
+    <div class="bg-amber-500 text-white p-3 font-bold">Asistente</div>
+    <div id="chat-messages" class="flex-1 p-3 overflow-y-auto" aria-live="polite"></div>
+    <input id="chat-input" type="text" placeholder="Escribe tu pregunta..." class="border-t p-2 w-full"/>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      const icon = menuBtn.querySelector('i');
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-times');
+    });
+    document.addEventListener('click', e => {
+      if(!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)){
+        mobileMenu.classList.remove('open');
+        const icon = menuBtn.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    // Active link highlighting
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function() {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Chatbot toggle
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatBox = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+
+    chatToggle.addEventListener('click', () => {
+      chatBox.classList.toggle('hidden');
+      if(!chatBox.classList.contains('hidden')) chatInput.focus();
+    });
+
+    // Chatbot messaging
+    chatInput.addEventListener('keydown', async (e) => {
+      if(e.key !== 'Enter') return;
+      const msg = chatInput.value.trim();
+      if(!msg) return;
+
+      // Mostrar mensaje del usuario
+      const userMsg = document.createElement('div');
+      userMsg.textContent = "Tú: " + msg;
+      userMsg.className = 'mb-2 text-right';
+      chatMessages.appendChild(userMsg);
+      chatInput.value = '';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Enviar al backend
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+
+        const botMsg = document.createElement('div');
+        botMsg.textContent = "Bot: " + data.reply;
+        botMsg.className = 'mb-2 text-left text-gray-700';
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch(err) {
+        const errorMsg = document.createElement('div');
+        errorMsg.textContent = "Bot: Lo siento, hubo un error al procesar tu mensaje.";
+        errorMsg.className = 'mb-2 text-left text-red-600';
+        chatMessages.appendChild(errorMsg);
+      }
+    });
+  </script>
+</body>
+</html>
