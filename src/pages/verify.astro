@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-const SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
+const SITE_KEY = "6Lf4YsotAAAAAAAntwc5xAQ0HuD1ocijuqdimE1Lg";
 ---
 
 <html lang="es">
@@ -29,7 +29,6 @@ const SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
     </div>
 
     <script>
-      // Redirige al home si ya pasó el captcha
       if(localStorage.getItem('verified')) {
         window.location.href = '/index_home';
       }
@@ -48,7 +47,6 @@ const SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
     </script>
 
     <style>
-      /* Animación simple para Material Design feel */
       @keyframes fade-in {
         from { opacity: 0; transform: translateY(-20px); }
         to { opacity: 1; transform: translateY(0); }
