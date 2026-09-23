@@ -1,5 +1,4 @@
-import { pool } from '../../../db.js';
-
+import { pool } from '../../db/db.js';
 export async function get() {
   try {
     const result = await pool.query('SELECT * FROM mascotas WHERE disponible = true');
